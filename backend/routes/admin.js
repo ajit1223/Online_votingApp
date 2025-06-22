@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Candidate = require('../models/Candidate');
-// const authMiddleware = require('../middleware/auth');
-// const authMiddleware = require('../middleware/authMiddleware');
+
 const verifyToken = require('../middleware/authMiddleware');
+const verifyAdmin = require('../middleware/adminMiddleware');
 
-
-
-// Add a new candidate (protected)
-router.post('/add', verifyToken, async (req, res) => {
+// Add a new candidate (admin only)
+router.post('/add', verifyToken, verifyAdmin, async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -24,8 +22,8 @@ router.post('/add', verifyToken, async (req, res) => {
   }
 });
 
-// Get voting results (protected)
-router.get('/results', verifyToken, async (req, res) => {
+// Get voting results (admin only)
+router.get('/results', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const candidates = await Candidate.find().select('name votes');
     res.status(200).json(candidates);
